@@ -1,0 +1,6 @@
+Environment,Env_Name_Main,Env_Name_BC,Seed_Main,Seed_BC,T_Main,T_BC,BC_Epochs_Main,BC_Epochs_BC,BC_Eval_Freq_Main,BC_Eval_Freq_BC,BC_Eval_Episodes_Main,BC_Eval_Episodes_BC,BC_Expert_Episodes_Main,BC_Expert_Episodes_BC,Reward_Hidden_Main,BC_Hidden_BC,Reward_LR_Main,BC_LR_BC,SAC_Batch_Main,BC_Batch_BC
+halfcheetah,HalfCheetah-v2,HalfCheetah-v2,23,23,1000,1000,10000,10000,100,100,20,20,16,16,"[64, 64]","[64, 64]",0.0001,0.0001,100,100
+ant,Ant-v2,Ant-v2,1,1,1000,1000,10000,10000,100,100,20,20,16,16,"[128, 128]","[128, 128]",0.0001,0.0001,100,100
+walker2d,Walker2d-v3,Walker2d-v3,23,1,1000,1000,10000,10000,100,100,20,20,16,16,"[64, 64]","[64, 64]",0.0001,0.0001,100,100
+hopper,Hopper-v3,Hopper-v3,23,1,1000,1000,10000,10000,100,100,20,20,16,16,"[64, 64]","[64, 64]",0.0001,0.0001,100,100
+humanoid,Humanoid-v3,Humanoid-v3,1,1,1000,1000,10000,10000,100,100,20,20,16,16,"[128, 128]","[128, 128]",0.0001,0.0001,100,100
