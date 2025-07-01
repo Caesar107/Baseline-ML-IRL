@@ -1,3 +1,24 @@
+📌 Acknowledgement
+
+This repository is based on the original implementation of ML-IRL (Maximum-Likelihood Inverse Reinforcement Learning), which can be found at:
+
+🔗 https://github.com/Cloud0723/ML-IRL
+
+We would like to thank the original authors for their open-source contribution.
+
+✨ Modifications
+
+This repository reimplements and modifies the original code to suit the requirements of our custom reward learning framework and algorithmic environment, including (but not limited to):
+
+· Updated support for new environments and training loops.
+
+· Integration with customized reward update strategies.
+
+· Restructured configuration and logging format.
+
+· Additional experimental tracking and debug utilities.
+
+
 # Maximum-Likelihood Inverse Reinforcement Learning with Finite-Time Guarantees
 ML-IRL is an algorithm for inverse reinforcement learning that is discussed in the Neurips paper [link](https://proceedings.neurips.cc/paper_files/paper/2022/file/41bd71e7bf7f9fe68f1c936940fd06bd-Paper-Conference.pdf) and AISTAT paper [link](https://openreview.net/forum?id=j4CbQGb0iF&referrer=%5Bthe%20profile%20of%20Chenliang%20Li%5D(%2Fprofile%3Fid%3D~Chenliang_Li3))
 
