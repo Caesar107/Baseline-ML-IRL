@@ -209,6 +209,8 @@ class CustomAntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.T = T
         self.r = r
         self.prev_obs = None
+        # Add render_mode attribute for compatibility
+        self.render_mode = None
         if disabled:
             model = angry_ant_crippled(gear=gear)
         else:

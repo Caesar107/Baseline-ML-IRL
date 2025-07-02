@@ -10,10 +10,10 @@ env:
 
 # BC专用参数（与主配置中的bc段对齐）
 bc:
-  epochs: 10000  # 与主配置一致
+  epochs: 50000  # 与主配置一致
   eval_freq: 100  # 与主配置一致
   eval_episodes: 20  # 与主配置一致
-  expert_episodes: 16  # 与主配置一致
+  expert_episodes: 1  # 与主配置一致
 
 # BC网络参数（参考主配置的reward网络结构）
 bc_network:
