@@ -10,10 +10,11 @@ env:
 
 # AIRL专用参数
 airl:
-  total_timesteps: 5000000  # AIRL训练总步数，约500轮 (500 * 8192)
-  expert_episodes: 16       # 专家轨迹数量，与BC保持一致
+  total_timesteps: 4200000  # AIRL训练总步数，确保500次评估 (500 × 8400)
+  expert_episodes: 1       # 专家轨迹数量，与BC保持一致
   eval_episodes: 20         # 评估episode数
-  demo_batch_size: 2048     # 演示数据批大小
+  eval_freq: 8400           # 每6千步评估一次，总共500次评估
+  demo_batch_size: 256     # 演示数据批大小，调小以适应1个专家轨迹
   gen_replay_buffer_capacity: 4096  # 生成器replay buffer容量
   n_disc_updates_per_round: 8       # 每轮判别器更新次数
   n_envs: 4                         # 并行环境数

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AIRL (Adversarial Inverse Reinforcement Learning) training script
+GAIL (Generative Adversarial Imitation Learning) training script
 Based on imitation library implementation
 """
 
@@ -13,11 +13,11 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.vec_env import DummyVecEnv
-from imitation.algorithms.adversarial.airl import AIRL
+from imitation.algorithms.adversarial.gail import GAIL
 from imitation.data import rollout
 from imitation.data.types import Trajectory
 from imitation.data.wrappers import RolloutInfoWrapper
-from imitation.rewards.reward_nets import BasicShapedRewardNet
+from imitation.rewards.reward_nets import BasicRewardNet
 from imitation.util.networks import RunningNorm
 from imitation.util.util import make_vec_env
 import datetime
@@ -170,7 +170,7 @@ def make_env_with_gymnasium(env_name):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python airl_trainer.py <config_file>")
+        print("Usage: python gail_trainer.py <config_file>")
         sys.exit(1)
     
     # Load configuration
@@ -180,7 +180,7 @@ def main():
     # Extract parameters
     env_name = v['env']['env_name']
     seed = v['seed']
-    airl_config = v['airl']
+    gail_config = v['gail']
     ppo_config = v.get('ppo', {})
     
     # System setup
@@ -191,7 +191,7 @@ def main():
     
     print(f"Using device: {device}")
     print(f"Environment: {env_name}")
-    print(f"AIRL Config: {airl_config}")
+    print(f"GAIL Config: {gail_config}")
     print(f"PPO Config: {ppo_config}")
     
     # Create vectorized environment
@@ -204,8 +204,8 @@ def main():
             env = make_env_with_gymnasium(env_name)
             return RolloutInfoWrapper(env)
         
-        venv = DummyVecEnv([env_fn for _ in range(airl_config.get('n_envs', 8))])
-        print(f"Created vectorized environment with {airl_config.get('n_envs', 8)} environments")
+        venv = DummyVecEnv([env_fn for _ in range(gail_config.get('n_envs', 8))])
+        print(f"Created vectorized environment with {gail_config.get('n_envs', 8)} environments")
     except Exception as e:
         print(f"Error creating vectorized environment: {e}")
         # Fallback to single environment
@@ -218,7 +218,7 @@ def main():
     print(f"  Action space: {venv.action_space}")
     
     # Logging setup
-    exp_id = f"AIRL/logs/{env_name}/exp-{airl_config['expert_episodes']}"
+    exp_id = f"GAIL/logs/{env_name}/exp-{gail_config['expert_episodes']}"
     if not os.path.exists(exp_id):
         os.makedirs(exp_id, exist_ok=True)
     
@@ -238,7 +238,7 @@ def main():
     print("Loading expert trajectories...")
     expert_trajectories = load_expert_trajectories(
         env_name, 
-        airl_config['expert_episodes']
+        gail_config['expert_episodes']
     )
     
     # Create PPO learner
@@ -258,21 +258,21 @@ def main():
         verbose=1
     )
     
-    # Create reward network
+    # Create reward network (Basic for GAIL, not shaped like AIRL)
     print("Creating reward network...")
-    reward_net = BasicShapedRewardNet(
+    reward_net = BasicRewardNet(
         observation_space=venv.observation_space,
         action_space=venv.action_space,
         normalize_input_layer=RunningNorm
     )
     
-    # Create AIRL trainer
-    print("Creating AIRL trainer...")
-    airl_trainer = AIRL(
+    # Create GAIL trainer
+    print("Creating GAIL trainer...")
+    gail_trainer = GAIL(
         demonstrations=expert_trajectories,
-        demo_batch_size=airl_config.get('demo_batch_size', 2048),
-        gen_replay_buffer_capacity=airl_config.get('gen_replay_buffer_capacity', 512),
-        n_disc_updates_per_round=airl_config.get('n_disc_updates_per_round', 16),
+        demo_batch_size=gail_config.get('demo_batch_size', 2048),
+        gen_replay_buffer_capacity=gail_config.get('gen_replay_buffer_capacity', 512),
+        n_disc_updates_per_round=gail_config.get('n_disc_updates_per_round', 16),
         venv=venv,
         gen_algo=learner,
         reward_net=reward_net,
@@ -285,7 +285,7 @@ def main():
     learner_rewards_before, _ = evaluate_policy(
         learner, 
         venv, 
-        n_eval_episodes=airl_config.get('eval_episodes', 10), 
+        n_eval_episodes=gail_config.get('eval_episodes', 10), 
         return_episode_rewards=True
     )
     mean_reward_before = np.mean(learner_rewards_before)
@@ -293,18 +293,18 @@ def main():
     print(f"Mean reward before training: {mean_reward_before:.2f} ± {std_reward_before:.2f}")
     
     # Training with periodic evaluation
-    print(f"Starting AIRL training for {airl_config['total_timesteps']} timesteps...")
+    print(f"Starting GAIL training for {gail_config['total_timesteps']} timesteps...")
     start_time = time.time()
     
     # Setup periodic evaluation
-    eval_freq = airl_config.get('eval_freq', 50000)  # Evaluate every 50k steps by default
-    total_timesteps = airl_config['total_timesteps']
+    eval_freq = gail_config.get('eval_freq', 50000)  # Evaluate every 50k steps by default
+    total_timesteps = gail_config['total_timesteps']
     n_evaluations = total_timesteps // eval_freq
     
     # Create progress CSV
     progress_file = os.path.join(log_folder, 'progress.csv')
     with open(progress_file, 'w') as f:
-        f.write("AIRL Round,AIRL Timesteps,AIRL Mean Reward,AIRL Std Reward,AIRL Training Time,AIRL Improvement\n")
+        f.write("GAIL Round,GAIL Timesteps,GAIL Mean Reward,GAIL Std Reward,GAIL Training Time,GAIL Improvement\n")
     
     # Training with evaluation
     for round_i in range(n_evaluations):
@@ -314,7 +314,7 @@ def main():
             timesteps_this_round = total_timesteps - (round_i * eval_freq)
         
         print(f"Training round {round_i + 1}/{n_evaluations} ({timesteps_this_round} timesteps)...")
-        airl_trainer.train(total_timesteps=timesteps_this_round)
+        gail_trainer.train(total_timesteps=timesteps_this_round)
         
         # Evaluate current policy
         print(f"Evaluating after round {round_i + 1}...")
@@ -322,7 +322,7 @@ def main():
         eval_rewards, _ = evaluate_policy(
             learner, 
             venv, 
-            n_eval_episodes=airl_config.get('eval_episodes', 10),
+            n_eval_episodes=gail_config.get('eval_episodes', 10),
             return_episode_rewards=True
         )
         
@@ -338,12 +338,12 @@ def main():
             f.write(f"{round_i + 1},{(round_i + 1) * eval_freq},{mean_reward:.6f},{std_reward:.6f},{current_time:.2f},{improvement:.6f}\n")
         
         # Log to tensorboard/logger
-        logger.record_tabular("AIRL Round", round_i + 1)
-        logger.record_tabular("AIRL Timesteps", (round_i + 1) * eval_freq)
-        logger.record_tabular("AIRL Mean Reward", mean_reward)
-        logger.record_tabular("AIRL Std Reward", std_reward)
-        logger.record_tabular("AIRL Improvement", improvement)
-        logger.record_tabular("AIRL Training Time", current_time)
+        logger.record_tabular("GAIL Round", round_i + 1)
+        logger.record_tabular("GAIL Timesteps", (round_i + 1) * eval_freq)
+        logger.record_tabular("GAIL Mean Reward", mean_reward)
+        logger.record_tabular("GAIL Std Reward", std_reward)
+        logger.record_tabular("GAIL Improvement", improvement)
+        logger.record_tabular("GAIL Training Time", current_time)
         logger.dump_tabular()
     
     training_time = time.time() - start_time
@@ -355,7 +355,7 @@ def main():
     learner_rewards_after, _ = evaluate_policy(
         learner, 
         venv, 
-        n_eval_episodes=airl_config.get('eval_episodes', 10) * 2,  # More episodes for final eval
+        n_eval_episodes=gail_config.get('eval_episodes', 10) * 2,  # More episodes for final eval
         return_episode_rewards=True
     )
     mean_reward_after = np.mean(learner_rewards_after)
@@ -368,7 +368,7 @@ def main():
     
     # Add final results to progress CSV
     with open(progress_file, 'a') as f:
-        f.write(f",,,{airl_config['expert_episodes']},{mean_reward_after:.6f},{len(expert_trajectories)},{std_reward_after:.6f}\n")
+        f.write(f",,,{gail_config['expert_episodes']},{mean_reward_after:.6f},{len(expert_trajectories)},{std_reward_after:.6f}\n")
     
     # Save models
     learner_path = os.path.join(log_folder, 'model', 'learner_policy.zip')
@@ -387,27 +387,27 @@ def main():
         'std_reward_after': float(std_reward_after),
         'improvement': float(improvement),
         'training_time': training_time,
-        'total_timesteps': airl_config['total_timesteps'],
-        'expert_episodes': airl_config['expert_episodes'],
+        'total_timesteps': gail_config['total_timesteps'],
+        'expert_episodes': gail_config['expert_episodes'],
         'expert_trajectories': len(expert_trajectories)
     }
     
-    results_path = os.path.join(log_folder, 'airl_results.json')
+    results_path = os.path.join(log_folder, 'gail_results.json')
     with open(results_path, 'w') as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to: {results_path}")
     
     # Final logging
-    logger.record_tabular("AIRL Mean Reward Before", mean_reward_before)
-    logger.record_tabular("AIRL Std Reward Before", std_reward_before)
-    logger.record_tabular("AIRL Mean Reward After", mean_reward_after)
-    logger.record_tabular("AIRL Std Reward After", std_reward_after)
-    logger.record_tabular("AIRL Improvement", improvement)
-    logger.record_tabular("AIRL Training Time", training_time)
-    logger.record_tabular("AIRL Expert Trajectories", len(expert_trajectories))
+    logger.record_tabular("GAIL Mean Reward Before", mean_reward_before)
+    logger.record_tabular("GAIL Std Reward Before", std_reward_before)
+    logger.record_tabular("GAIL Mean Reward After", mean_reward_after)
+    logger.record_tabular("GAIL Std Reward After", std_reward_after)
+    logger.record_tabular("GAIL Improvement", improvement)
+    logger.record_tabular("GAIL Training Time", training_time)
+    logger.record_tabular("GAIL Expert Trajectories", len(expert_trajectories))
     logger.dump_tabular()
     
-    print("AIRL training completed!")
+    print("GAIL training completed!")
     
     # Close environment
     venv.close()

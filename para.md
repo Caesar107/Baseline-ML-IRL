@@ -72,3 +72,11 @@ MLP（多层感知机）奖励模型，64单元的隐藏层
 仅使用1个专家轨迹（irl.expert_episodes: 1）进行训练
 每次训练使用10个生成的轨迹（irl.training_trajs: 10）
 这些参数设置表明这是一个典型的IRL训练配置，通过迭代优化策略和奖励函数来模仿专家行为。重点是SAC训练次数（epochs: 5）和IRL总迭代次数（n_itrs: 200），这决定了整个训练的时长和性能。
+
+
+ML-IRL训练参数分析：
+
+irl.n_itrs: 600 (IRL迭代次数)
+sac.epochs: 5 (每次IRL迭代中SAC训练的epoch数)
+env.T: 1000 (每个轨迹最大长度)
+300w

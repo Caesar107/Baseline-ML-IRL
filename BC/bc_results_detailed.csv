@@ -1,0 +1,6 @@
+Environment,Experiment,Run,Final Reward,Final Std,Max Reward,Min Reward,Avg Reward,Reward Std,Epochs,Trajectories,Transitions,Total Evaluations,Status
+HalfCheetah-v2,exp-1,2025_07_02_04_55_34,-418.72,83.64,238.74,-439.43,-202.37,210.41,,1.00,1000.00,500,Completed
+Ant-v2,exp-1,2025_07_02_04_55_39,-248.93,524.81,927.05,-503.84,119.37,285.33,,1.00,1000.00,500,Completed
+Walker2d-v3,exp-1,2025_07_02_04_55_44,4.78,25.84,447.83,0.09,115.09,91.40,,1.00,1000.00,500,Completed
+Hopper-v3,exp-1,2025_07_02_04_55_49,392.99,151.91,763.12,140.61,418.16,99.92,,1.00,1000.00,500,Completed
+Humanoid-v3,exp-1,2025_07_02_04_55_54,355.12,74.32,383.50,183.49,335.09,20.30,,1.00,1000.00,500,Completed

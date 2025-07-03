@@ -10,7 +10,7 @@ import numpy as np
 def analyze_bc_results():
     """分析所有BC训练结果"""
     
-    logs_dir = "baselines/logs"
+    logs_dir = "BC/logs"
     results = []
     
     # 环境列表
@@ -115,8 +115,8 @@ def analyze_bc_results():
         print(summary_df.to_string(index=False))
         
         # 保存详细结果
-        df.to_csv('baselines/bc_results_detailed.csv', index=False, float_format='%.2f')
-        summary_df.to_csv('baselines/bc_results_summary.csv', index=False)
+        df.to_csv('BC/bc_results_detailed.csv', index=False, float_format='%.2f')
+        summary_df.to_csv('BC/bc_results_summary.csv', index=False)
         
         print(f"\n📁 Detailed results saved to: baselines/bc_results_detailed.csv")
         print(f"📁 Summary saved to: baselines/bc_results_summary.csv")

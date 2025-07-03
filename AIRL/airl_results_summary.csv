@@ -1,0 +1,6 @@
+Environment,Final Reward,Final Std,Max Reward,Status
+HalfCheetah-v2,870.15,297.26,913.55,Completed
+Ant-v2,-24.08,5.53,996.88,Completed
+Walker2d-v3,-5.21,0.09,8400.00,Completed
+Hopper-v3,4.99,0.04,11.62,Completed
+Humanoid-v3,72.39,2.04,222.21,Completed
