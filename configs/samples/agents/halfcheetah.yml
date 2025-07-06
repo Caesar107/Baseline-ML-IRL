@@ -44,7 +44,7 @@ reward:
   gradient_step: 1
   momentum: 0.9
    # Reward update constraints parameters
-  use_constraints: false
+  use_constraints: True
   constraint_type: "simple"  # "simple" or "complex"
   constraint_weight: 0.003    # Weight for simple constraint
   max_reward_change: 1.0     # Maximum allowed reward change

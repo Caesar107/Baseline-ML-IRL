@@ -180,6 +180,12 @@ def main():
     # Extract parameters
     env_name = v['env']['env_name']
     seed = v['seed']
+    
+    # Generate random seed if seed is -1
+    if seed == -1:
+        seed = int(time.time() * 1000) % 100000  # Generate random seed from timestamp
+        print(f"Generated random seed: {seed}")
+    
     gail_config = v['gail']
     ppo_config = v.get('ppo', {})
     

@@ -183,6 +183,12 @@ def main():
     env_name = v['env']['env_name']
     state_indices = v['env']['state_indices']
     seed = v['seed']
+    
+    # Generate random seed if seed is -1
+    if seed == -1:
+        seed = int(time.time() * 1000) % 100000  # Generate random seed from timestamp
+        print(f"Generated random seed: {seed}")
+    
     bc_config = v['bc']
     
     # System setup

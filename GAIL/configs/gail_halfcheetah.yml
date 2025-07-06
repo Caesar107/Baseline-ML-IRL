@@ -1,6 +1,6 @@
 obj: gail
 IS: false
-seed: 23
+seed: -1  # 使用-1表示随机种子
 cuda: -1
 
 env:
