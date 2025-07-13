@@ -233,9 +233,12 @@ def main():
     
     # Load expert trajectories
     print("Loading expert trajectories...")
+    expert_data_dir = bc_config.get('expert_data_path', 'expert_data')
+    print(f"Expert data directory: {expert_data_dir}")
     trajectories = load_expert_trajectories(
         env_name, 
-        bc_config['expert_episodes']
+        bc_config['expert_episodes'],
+        expert_data_dir
     )
     
     # Convert trajectories to transitions for BC
